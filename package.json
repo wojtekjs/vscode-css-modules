@@ -39,6 +39,11 @@
                     "type": "object",
                     "default": {},
                     "description": "Path alias for import module."
+                },
+                "cssModules.enableCompletion": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Toggles the auto-completion feature on or off."
                 }
             }
         }

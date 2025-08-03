@@ -9,15 +9,18 @@ export type PathAlias = AliasFromUserOptions | AliasFromTsConfig;
 export interface ExtensionOptions {
   camelCase: CamelCaseValues;
   pathAlias: AliasFromUserOptions;
+  enableCompletion: boolean;
 }
 
 export function readOptions(): ExtensionOptions {
   const configuration = workspace.getConfiguration(EXT_NAME);
   const camelCase = configuration.get<CamelCaseValues>("camelCase", false);
   const pathAlias = configuration.get<AliasFromUserOptions>("pathAlias", {});
+  const enableCompletion = configuration.get<boolean>("enableCompletion", true);
 
   return {
     camelCase,
     pathAlias,
+    enableCompletion,
   };
 }
