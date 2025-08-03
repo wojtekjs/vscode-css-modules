@@ -1,19 +1,19 @@
 {
-    "name": "vscode-css-modules",
-    "displayName": "CSS Modules",
+    "name": "vscode-css-modules-wjs",
+    "displayName": "CSS Modules WJS",
     "description": "Visual Studio Code extension for CSS Modules",
-    "version": "0.5.4",
-    "publisher": "clinyong",
+    "version": "0.5.5",
+    "publisher": "wojtekjs",
     "engines": {
         "vscode": "^1.56.0"
     },
     "categories": [
         "Other"
     ],
-    "homepage": "https://github.com/clinyong/vscode-css-modules",
+    "homepage": "https://github.com/wojtekjs/vscode-css-modules",
     "repository": {
         "type": "git",
-        "url": "https://github.com/clinyong/vscode-css-modules"
+        "url": "https://github.com/wojtekjs/vscode-css-modules"
     },
     "activationEvents": [
         "onLanguage:typescriptreact",
