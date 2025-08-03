@@ -1,3 +1,3 @@
-export const EXT_NAME = "cssModulesWJS";
+export const EXT_NAME = "cssModules";
 
 export const WORKSPACE_FOLDER_VARIABLE = "${workspaceFolder}";
