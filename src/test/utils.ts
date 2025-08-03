@@ -8,6 +8,7 @@ export function readOptions(
     {
       camelCase: false,
       pathAlias: {},
+      enableCompletion: true,
     },
     overrides
   );
