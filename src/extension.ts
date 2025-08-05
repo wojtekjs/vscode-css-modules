@@ -12,6 +12,7 @@ export function activate(context: ExtensionContext): void {
     { language: "javascript", scheme: "file" },
     { language: "typescript", scheme: "file" },
     { language: "astro", scheme: "file" },
+    { language: "yaml", scheme: "file" },
   ];
   const options = readOptions();
 

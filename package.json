@@ -1,8 +1,8 @@
 {
-    "name": "vscode-css-modules-wjs",
-    "displayName": "CSS Modules WJS",
-    "description": "Visual Studio Code extension for CSS Modules",
-    "version": "0.5.5",
+    "name": "vscode-css-yaml-interceptor",
+    "displayName": "CSS & YAML Source Interceptor (WJS)",
+    "description": "Visual Studio Code extension for CSS Modules & i18n YAML files",
+    "version": "0.6.0",
     "publisher": "wojtekjs",
     "engines": {
         "vscode": "^1.56.0"
@@ -20,14 +20,15 @@
         "onLanguage:javascriptreact",
         "onLanguage:javascript",
         "onLanguage:typescript",
-        "onLanguage:astro"
+        "onLanguage:astro",
+        "onLanguage:yaml"
     ],
     "contributes": {
         "configuration": {
             "type": "object",
-            "title": "CSS Modules Configuration",
+            "title": "CSS & YAML Interceptor Configuration",
             "properties": {
-                "cssModules.camelCase": {
+                "wjsInterceptor.camelCase": {
                     "type": [
                         "boolean",
                         "string"
@@ -35,12 +36,12 @@
                     "default": false,
                     "description": "Transform classnames in autocomplete suggestions."
                 },
-                "cssModules.pathAlias": {
+                "wjsInterceptor.pathAlias": {
                     "type": "object",
                     "default": {},
                     "description": "Path alias for import module."
                 },
-                "cssModules.enableCompletion": {
+                "wjsInterceptor.enableCompletion": {
                     "type": "boolean",
                     "default": true,
                     "description": "Toggles the auto-completion feature on or off."

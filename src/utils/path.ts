@@ -1,5 +1,5 @@
-import * as path from "path";
 import * as fse from "fs-extra";
+import * as path from "path";
 import { PathAlias } from "../options";
 
 function isPathExist(p: string): Promise<boolean> {
@@ -12,7 +12,8 @@ function isPathExist(p: string): Promise<boolean> {
 }
 
 export function genImportRegExp(key: string): RegExp {
-  const file = "(.+\\.(\\S{1,2}ss|stylus|styl))";
+  // const file = "(.+\\.(\\S{1,2}ss|stylus|styl))";
+  const file = "(.+\\.(?:\\S{1,2}ss|stylus|styl|i18n\\.(?:ya?ml)))";
   const fromOrRequire = "(?:from\\s+|=\\s+require(?:<any>)?\\()";
   const requireEndOptional = "\\)?";
   const pattern = `\\s${key}\\s+${fromOrRequire}["']${file}["']${requireEndOptional}`;

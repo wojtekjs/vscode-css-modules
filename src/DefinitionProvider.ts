@@ -1,26 +1,26 @@
+import * as fs from "fs";
+import * as _ from "lodash";
+import * as path from "path";
 import {
-  DefinitionProvider,
-  TextDocument,
-  Position,
   CancellationToken,
+  DefinitionProvider,
   Location,
+  Position,
+  TextDocument,
   Uri,
 } from "vscode";
-import { getCurrentLine, dashesCamelCase } from "./utils";
-import {
-  findImportModule,
-  genImportRegExp,
-  resolveImportPath,
-} from "./utils/path";
 import {
   AliasFromUserOptions,
   CamelCaseValues,
   ExtensionOptions,
 } from "./options";
-import * as path from "path";
-import * as fs from "fs";
-import * as _ from "lodash";
 import { getRealPathAlias } from "./path-alias";
+import { dashesCamelCase, getCurrentLine } from "./utils";
+import {
+  findImportModule,
+  genImportRegExp,
+  resolveImportPath,
+} from "./utils/path";
 
 type ClassTransformer = (cls: string) => string;
 
@@ -251,14 +251,38 @@ export class CSSModuleDefinitionProvider implements DefinitionProvider {
       currentDir,
       await getRealPathAlias(this.pathAliasOptions, document)
     );
+
+    // ——— New: if this came from a generated YAML .d.ts, jump to the real .yml
+    let sourcePath = importPath;
+    if (
+      importPath.endsWith(".d.ts") &&
+      /\.i18n\.(ya?ml)\.d\.ts$/.test(importPath)
+    ) {
+      const yamlPath = importPath.replace(/\.d\.ts$/, "");
+      if (fs.existsSync(yamlPath)) {
+        sourcePath = yamlPath;
+      }
+    }
+
     if (importPath === "") {
       return Promise.resolve(null);
     }
 
     let targetPosition: Position | null = null;
-    if (clickInfo.targetClass) {
+    // if (clickInfo.targetClass) {
+    //   targetPosition = getPosition(
+    //     importPath,
+    //     clickInfo.targetClass,
+    //     this._camelCaseConfig
+    //   );
+    // } else {
+    //   targetPosition = new Position(0, 0);
+    // }
+    // For CSS modules we still lookup the class; for YAML imports or usages
+    // we simply go to top-of-file.
+    if (clickInfo.targetClass && !sourcePath.match(/\.i18n\.ya?ml$/)) {
       targetPosition = getPosition(
-        importPath,
+        sourcePath,
         clickInfo.targetClass,
         this._camelCaseConfig
       );
@@ -269,8 +293,11 @@ export class CSSModuleDefinitionProvider implements DefinitionProvider {
     if (targetPosition === null) {
       return Promise.resolve(null);
     } else {
+      // return Promise.resolve(
+      //   new Location(Uri.file(importPath), targetPosition)
+      // );
       return Promise.resolve(
-        new Location(Uri.file(importPath), targetPosition)
+        new Location(Uri.file(sourcePath), targetPosition)
       );
     }
   }
