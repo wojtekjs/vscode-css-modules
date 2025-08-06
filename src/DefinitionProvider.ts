@@ -226,11 +226,13 @@ function getClickInfoByKeyword(
   };
 }
 
+/* WJS update: enhanced getClickInfo to allow jumping to source file from imported file alias cmd+click*/
 function getClickInfo(
   document: TextDocument,
   currentLine: string,
   position: Position
 ): ClickInfo | null {
+  // 1) clicking on the import statement itself
   const matches = genImportRegExp("(\\S+)").exec(currentLine);
   if (isImportLineMatch(currentLine, matches, position.character)) {
     return {
@@ -239,7 +241,29 @@ function getClickInfo(
     };
   }
 
-  return getClickInfoByKeyword(document, currentLine, position);
+  // 2) clicking on a property: the `foo` in css.foo (scss) or `bar` in content.bar (yaml)
+  const byKeyword = getClickInfoByKeyword(document, currentLine, position);
+  if (byKeyword) {
+    return byKeyword;
+  }
+
+  // 3) NEW: clicking on the alias itself (css or content)
+  //    grab the word under the cursor
+  const wordRange = document.getWordRangeAtPosition(position, /[A-Za-z0-9_$]+/);
+  if (wordRange) {
+    const alias = document.getText(wordRange);
+    // see if it was imported anywhere
+    const modulePath = findImportModule(document.getText(), alias);
+    if (modulePath) {
+      return {
+        importModule: modulePath,
+        targetClass: "",
+      };
+    }
+  }
+
+  // nothing matched
+  return null;
 }
 
 export class CSSModuleDefinitionProvider implements DefinitionProvider {

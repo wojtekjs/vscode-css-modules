@@ -2,7 +2,7 @@
     "name": "vscode-css-yaml-interceptor",
     "displayName": "CSS & YAML Source Interceptor (WJS)",
     "description": "Visual Studio Code extension for CSS Modules & i18n YAML files",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "publisher": "wojtekjs",
     "engines": {
         "vscode": "^1.56.0"
