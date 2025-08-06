@@ -70,7 +70,25 @@ function getTransformer(
   }
 }
 
-function getPosition(
+/**
+ * Scan a .yml/.yaml file for `key:` and return its Position.
+ */
+function getYamlPosition(filePath: string, key: string): Position {
+  const content = fs.readFileSync(filePath, "utf8");
+  const lines = content.split("\n");
+  // WJS - updated to include spaces before and after the key so that user can jump to yaml key position in yaml file
+  const keyPattern = new RegExp(`^\\s*${key}\\s*:`);
+  for (let i = 0; i < lines.length; i++) {
+    const m = keyPattern.exec(lines[i]);
+    if (m) {
+      return new Position(i, m.index);
+    }
+  }
+  // fallback if not found
+  return new Position(0, 0);
+}
+
+function getCssClassPosition(
   filePath: string,
   className: string,
   camelCaseConfig: CamelCaseValues
@@ -252,7 +270,7 @@ export class CSSModuleDefinitionProvider implements DefinitionProvider {
       await getRealPathAlias(this.pathAliasOptions, document)
     );
 
-    // ——— New: if this came from a generated YAML .d.ts, jump to the real .yml
+    // WJS update: if this came from a generated YAML .d.ts, jump to the real .yml
     let sourcePath = importPath;
     if (
       importPath.endsWith(".d.ts") &&
@@ -269,33 +287,26 @@ export class CSSModuleDefinitionProvider implements DefinitionProvider {
     }
 
     let targetPosition: Position | null = null;
-    // if (clickInfo.targetClass) {
-    //   targetPosition = getPosition(
-    //     importPath,
-    //     clickInfo.targetClass,
-    //     this._camelCaseConfig
-    //   );
-    // } else {
-    //   targetPosition = new Position(0, 0);
-    // }
-    // For CSS modules we still lookup the class; for YAML imports or usages
-    // we simply go to top-of-file.
-    if (clickInfo.targetClass && !sourcePath.match(/\.i18n\.ya?ml$/)) {
-      targetPosition = getPosition(
-        sourcePath,
-        clickInfo.targetClass,
-        this._camelCaseConfig
-      );
+    if (clickInfo.targetClass) {
+      if (sourcePath.match(/\.i18n\.ya?ml$/)) {
+        // YAML key lookup
+        targetPosition = getYamlPosition(sourcePath, clickInfo.targetClass);
+      } else {
+        // CSS-class lookup
+        targetPosition = getCssClassPosition(
+          sourcePath,
+          clickInfo.targetClass,
+          this._camelCaseConfig
+        );
+      }
     } else {
+      // import‐line (no property) → top of file
       targetPosition = new Position(0, 0);
     }
 
     if (targetPosition === null) {
       return Promise.resolve(null);
     } else {
-      // return Promise.resolve(
-      //   new Location(Uri.file(importPath), targetPosition)
-      // );
       return Promise.resolve(
         new Location(Uri.file(sourcePath), targetPosition)
       );
